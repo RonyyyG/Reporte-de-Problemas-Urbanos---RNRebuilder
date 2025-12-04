@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Reportes Urbanos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="app">
+        <div class="container" id="appContainer">
+
+            <div id="loginScreen" class="screen active">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Entrar no Sistema</h2>
+                        <p>Faça login para reportar problemas urbanos</p>
+                    </div>
+                    <div class="card-content">
+                        <form id="loginForm" class="space-y-4">
+                            <div class="form-group space-y-2">
+                                <label for="loginEmail">
+                                    📧 Email
+                                </label>
+                                <input type="text" id="loginEmail" placeholder='Digite seu Email' required>
+                            </div>
+                            <div class="form-group space-y-2">
+                                <label for="loginPassword">
+                                    🔒 Senha
+                                </label>
+                                <input type="password" id="loginPassword" placeholder="Digite sua senha" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary full-width">Entrar</button>
+                        </form>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <p>Não tem conta? <span class="btn-link" onclick="showScreen('register')">Registre-se</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="registerScreen" class="screen">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Criar Conta</h2>
+                        <p>Registre-se para usar o sistema</p>
+                    </div>
+                    <div class="card-content">
+                        <form id="registerForm" class="space-y-4">
+                            <div class="form-group space-y-2">
+                                <label for="registerName">
+                                    👤 Nome Completo
+                                </label>
+                                <input type="text" id="registerName" placeholder="Seu nome completo" required>
+                            </div>
+                            <div class="form-group space-y-2">
+                                <label for="registerEmail">
+                                    📧 Email
+                                </label>
+                                <input type="email" id="registerEmail" placeholder="seu@email.com" required>
+                            </div>
+                            <div class="form-group space-y-2">
+                                <label for="registerPassword">
+                                    🔒 Senha
+                                </label>
+                                <input type="password" id="registerPassword" placeholder="Crie uma senha segura"
+                                    required>
+                            </div>
+                            <button type="submit" class="btn btn-success full-width">Criar Conta</button>
+                        </form>
+                    </div>
+                    <div class="card-footer">
+                        <p>Já tem conta? <span class="btn-link" onclick="showScreen('login')">Entrar</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="reportScreen" class="screen">
+                <div class="card report-card">
+                    <div class="card-header">
+                        <h2>Reportar Problema</h2>
+                        <p>Olá, <span id="userName"></span>! Relate problemas urbanos aqui.</p>
+                    </div>
+                    <div class="card-content">
+                        <form id="reportForm" class="space-y-4">
+                            <div class="form-group space-y-2">
+                                <label for="typeProblem">
+                                    Tipo de Problema <span class="required">*</span>
+                                </label>
+                                <select id="typeProblem" required>
+                                    <option value="">Selecione o tipo</option>
+                                    <option value="buraco">Buraco na Via</option>
+                                    <option value="poste">Poste com Problema</option>
+                                    <option value="alagamento">Rua Alagada</option>
+                                    <option value="iluminacao">Problema de Iluminação</option>
+                                    <option value="sinalizacao">Sinalização Danificada</option>
+                                </select>
+                                <span class="error-message" id="typeProblemError">Selecione o tipo de problema.</span>
+                            </div>
+
+                            <div class="form-group space-y-2">
+                                <label for="street">
+                                    Local do Problema <span class="required">*</span>
+                                </label>
+                                <input type="text" id="street" placeholder="Nome da rua/avenida" required>
+                                <span class="error-message" id="streetError">Informe o local do problema.</span>
+                            </div>
+
+                            <div class="form-group space-y-2">
+                                <label for="complement">
+                                    Referência/Complemento <span class="required">*</span>
+                                </label>
+                                <input type="text" id="complement" placeholder="Ex: Próximo ao nº 123, Bairro Centro"
+                                    required>
+                                <span class="error-message" id="complementError">Adicione uma referência.</span>
+                            </div>
+
+                            <div class="form-group space-y-2">
+                                <label>🗺️ Localização GPS</label>
+                                <div class="location-group">
+                                    <button type="button" id="getLocationBtn" class="btn btn-secondary">
+                                        📍 Obter GPS
+                                    </button>
+                                    <span id="locationStatus" class="location-status"></span>
+                                </div>
+                                <input type="text" id="gpsCoords"
+                                    placeholder="Coordenadas serão preenchidas automaticamente" readonly>
+                            </div>
+
+                            <div class="form-group space-y-2">
+                                <label for="description">
+                                    📄 Descrição Detalhada <span class="required">*</span>
+                                </label>
+                                <textarea id="description" rows="3"
+                                    placeholder="Descreva o problema com detalhes, gravidade e impactos"
+                                    required></textarea>
+                                <span class="error-message" id="descriptionError">Descreva o problema
+                                    detalhadamente.</span>
+                            </div>
+
+                            <div class="form-group space-y-2">
+                                <label for="mediaFiles">
+                                    📷 Anexar Evidências (Opcional)
+                                </label>
+                                <input type="file" id="mediaFiles" accept="image/*,video/*" multiple>
+                                <small>Fotos e vídeos ajudam na análise do problema</small>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary full-width">
+                                📤 Enviar Reporte
+                            </button>
+                        </form>
+                    </div>
+                    <div class="card-footer">
+                        <button onclick="logout()" class="btn btn-danger full-width">
+                            🚪 Sair do Sistema
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="adminScreen" class="screen">
+                <div class="card admin-card">
+                    <div class="card-header">
+                        <h2>Painel do Administrador</h2>
+                        <p>Gerenciamento de relatórios recebidos</p>
+                    </div>
+                    <div class="card-content">
+                        <div id="reportListContainer" class="report-list">
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button onclick="logout()" class="btn btn-danger full-width">
+                            🚪 Sair do Painel
+                        </button>
+                    </div>
+                    <div class="card-footer">
+                        <button onclick="downloadAsCSV()" class="btn btn-csv full-width">
+                            📝 Baixar CSV
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Estado da aplicação
+        let currentScreen = 'login';
+        let users = [];
+        let loggedUser = null;
+        let reports = [];
+        let errors = {};
+        let isGettingLocation = false;
+
+        function downloadAsCSV(data = reports) {
+            // Converte a lista Reports em duas listas com IDs e Itens
+            let csvDict = [
+                [
+                    "complement",
+                    "createdAt",
+                    "description",
+                    "gpsCoords",
+                    "id",
+                    "status",
+                    "street",
+                    "typeProblem",
+                    "userEmail",
+                    "userName"
+                ],
+                ...data.map(item => [
+                    item.complement,
+                    item.createdAt,
+                    item.description,
+                    item.gpsCoords,
+                    item.id,
+                    item.status,
+                    item.street,
+                    item.typeProblem,
+                    item.userEmail,
+                    item.userName
+                ])].map(e => e.join(",")).join("\n");
+
+            // console.log(csvDict)
+            // Cria um Binary Large Object (Blob) com o conteúdo do dicionário novo
+
+            var blob = new Blob([csvDict], { type: "text/csv" });
+            url = window.URL.createObjectURL(blob);
+            let a = document.createElement("a");
+
+            // Cria uma tag <a> com o link pra baixar o csv e clica nele
+            a.href = url;
+            a.download = "reports.csv";
+            a.click();
+
+            // Deleta a tag nova
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Elementos da DOM
+        const appContainer = document.getElementById('appContainer');
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function () {
+            loadFromStorage();
+            setupEventListeners();
+
+            if (loggedUser) {
+                if (loggedUser.email === 'admin') {
+                    appContainer.classList.add('admin-view');
+                    loadAdminReports();
+                    showScreen('admin');
+                } else {
+                    appContainer.classList.remove('admin-view');
+                    document.getElementById('userName').textContent = loggedUser.name;
+                    showScreen('report');
+                }
+            }
+        });
+
+        // Configurar event listeners
+        function setupEventListeners() {
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('registerForm').addEventListener('submit', handleRegister);
+            document.getElementById('reportForm').addEventListener('submit', handleReportSubmit);
+            document.getElementById('getLocationBtn').addEventListener('click', getCurrentLocation);
+
+            const formFields = ['typeProblem', 'street', 'complement', 'description'];
+            formFields.forEach(field => {
+                const element = document.getElementById(field);
+                element.addEventListener('input', () => clearError(field));
+                element.addEventListener('change', () => clearError(field));
+            });
+        }
+
+        // Gerenciamento de telas
+        function showScreen(screenName) {
+            console.log(reports)
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenName + 'Screen').classList.add('active');
+            currentScreen = screenName;
+        }
+
+        // Funções de armazenamento
+        function loadFromStorage() {
+            const storedUsers = localStorage.getItem('users');
+            const storedLoggedUser = localStorage.getItem('loggedUser');
+            const storedReports = localStorage.getItem('reports');
+
+            if (storedUsers) users = JSON.parse(storedUsers);
+            if (storedLoggedUser) loggedUser = JSON.parse(storedLoggedUser);
+            if (storedReports) reports = JSON.parse(storedReports);
+        }
+
+        function saveToStorage(key, data) {
+            localStorage.setItem(key, JSON.stringify(data));
+        }
+
+        // Validação
+        function validateField(fieldName, value) {
+            const isEmpty = !value.trim();
+            if (isEmpty) {
+                showError(fieldName);
+                return false;
+            }
+            return true;
+        }
+
+        function showError(fieldName) {
+            const field = document.getElementById(fieldName);
+            const errorMsg = document.getElementById(fieldName + 'Error');
+
+            if (field) field.classList.add('error');
+            if (errorMsg) errorMsg.classList.add('show');
+
+            errors[fieldName] = true;
+        }
+
+        function clearError(fieldName) {
+            const field = document.getElementById(fieldName);
+            const errorMsg = document.getElementById(fieldName + 'Error');
+
+            if (field) field.classList.remove('error');
+            if (errorMsg) errorMsg.classList.remove('show');
+
+            delete errors[fieldName];
+        }
+
+        function clearAllErrors() {
+            const errorFields = ['typeProblem', 'street', 'complement', 'description'];
+            errorFields.forEach(field => clearError(field));
+        }
+
+        // Autenticação
+        function handleRegister(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('registerName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim().toLowerCase();
+            const password = document.getElementById('registerPassword').value;
+
+            if (!name || !email || !password) {
+                alert('Por favor, preencha todos os campos.');
+                return;
+            }
+
+            const existingUser = users.find(u => u.email === email);
+            if (existingUser || email === 'admin') {
+                alert('Email já cadastrado ou inválido.');
+                return;
+            }
+
+            const newUser = { name, email, password };
+            users.push(newUser);
+            saveToStorage('users', users);
+
+            alert('Cadastro realizado com sucesso!');
+            document.getElementById('registerForm').reset();
+            showScreen('login');
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const password = document.getElementById('loginPassword').value;
+
+            if (email === 'admin' && password === 'admin') {
+                loggedUser = { name: 'Admin', email: 'admin' };
+                saveToStorage('loggedUser', loggedUser);
+
+                alert('Bem-vindo, Administrador!');
+
+                appContainer.classList.add('admin-view');
+                loadAdminReports();
+                showScreen('admin');
+
+                document.getElementById('loginForm').reset();
+                return;
+            }
+
+            const user = users.find(u => u.email === email && u.password === password);
+
+            if (!user) {
+                alert('Email ou senha incorretos.');
+                return;
+            }
+
+            loggedUser = user;
+            saveToStorage('loggedUser', user);
+
+            alert('Login realizado com sucesso!');
+            document.getElementById('loginForm').reset();
+
+            appContainer.classList.remove('admin-view');
+            document.getElementById('userName').textContent = user.name;
+            showScreen('report');
+        }
+
+        function logout() {
+            loggedUser = null;
+            localStorage.removeItem('loggedUser');
+
+            resetReportForm();
+            document.getElementById('reportListContainer').innerHTML = '';
+
+            appContainer.classList.remove('admin-view');
+            showScreen('login');
+            alert('Você saiu do sistema.');
+        }
+
+        // Localização
+        function getCurrentLocation() {
+            if (isGettingLocation) return;
+
+            const btn = document.getElementById('getLocationBtn');
+            const status = document.getElementById('locationStatus');
+
+            isGettingLocation = true;
+            btn.disabled = true;
+            btn.textContent = '🔄 Localizando...';
+            status.textContent = 'Obtendo localização...';
+
+            if (!navigator.geolocation) {
+                status.textContent = 'Geolocalização não suportada.';
+                resetLocationButton();
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const lat = position.coords.latitude.toFixed(6);
+                    const lon = position.coords.longitude.toFixed(6);
+                    document.getElementById('gpsCoords').value = `${lat}, ${lon}`;
+                    status.textContent = 'Localização obtida.';
+                    resetLocationButton();
+                },
+                (error) => {
+                    status.textContent = 'Erro ao obter localização.';
+                    resetLocationButton();
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
+        }
+
+        function resetLocationButton() {
+            const btn = document.getElementById('getLocationBtn');
+            isGettingLocation = false;
+            btn.disabled = false;
+            btn.textContent = '📍 Obter GPS';
+        }
+
+        // Relatório
+        function resetReportForm() {
+            document.getElementById('reportForm').reset();
+            document.getElementById('gpsCoords').value = '';
+            document.getElementById('locationStatus').textContent = '';
+            clearAllErrors();
+        }
+
+        function readFileAsDataURL(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve({
+                    name: file.name,
+                    type: file.type,
+                    data: reader.result
+                });
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function handleReportSubmit(e) {
+            e.preventDefault();
+
+            const typeProblem = document.getElementById('typeProblem').value;
+            const street = document.getElementById('street').value;
+            const complement = document.getElementById('complement').value;
+            const description = document.getElementById('description').value;
+            const gpsCoords = document.getElementById('gpsCoords').value;
+            const mediaFiles = document.getElementById('mediaFiles').files;
+
+            clearAllErrors();
+            let isValid = true;
+
+            if (!validateField('typeProblem', typeProblem)) isValid = false;
+            if (!validateField('street', street)) isValid = false;
+            if (!validateField('complement', complement)) isValid = false;
+            if (!validateField('description', description)) isValid = false;
+
+            if (!isValid) return;
+
+            const processedMediaFiles = [];
+            if (mediaFiles && mediaFiles.length > 0) {
+                for (let i = 0; i < mediaFiles.length; i++) {
+
+                    const fileData = await readFileAsDataURL(mediaFiles[i]);
+                    processedMediaFiles.push(fileData);
+                }
+            }
+
+            const newReport = {
+                id: Date.now(),
+                userEmail: loggedUser.email,
+                userName: loggedUser.name,
+                typeProblem,
+                street: street.trim(),
+                complement: complement.trim(),
+                gpsCoords: gpsCoords.trim(),
+                description: description.trim(),
+                mediaFiles: processedMediaFiles,
+                status: 'Pendente',
+                createdAt: new Date().toISOString()
+            };
+
+            reports.push(newReport);
+            saveToStorage('reports', reports);
+
+            alert('Relatório enviado com sucesso!');
+            resetReportForm();
+        }
+
+        // --- FUNÇÕES DO ADMIN ---
+
+
+        function toggleReportDetails(reportId) {
+            const details = document.getElementById(`details-${reportId}`);
+            const reportElement = document.getElementById(`report-${reportId}`);
+            const toggle = reportElement.querySelector('.details-toggle');
+
+            details.classList.toggle('show');
+            toggle.classList.toggle('open');
+        }
+
+        /**
+         *Carrega e exibe todos os relatórios na tela de admin.
+         */
+        function loadAdminReports() {
+            const container = document.getElementById('reportListContainer');
+            container.innerHTML = '';
+
+            if (reports.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666;">Nenhum relatório recebido ainda.</p>';
+                return;
+            }
+
+            const sortedReports = reports.sort((a, b) => b.id - a.id);
+
+            sortedReports.forEach(report => {
+                const date = new Date(report.createdAt).toLocaleString('pt-BR');
+
+
+                const statusOptions = ['Pendente', 'Em Andamento', 'Concluído'];
+                let selectHtml = `<select id="status-${report.id}" class="status-select" onchange="updateReportStatus(${report.id}, this.value)">`;
+                statusOptions.forEach(status => {
+                    const isSelected = report.status === status ? 'selected' : '';
+                    selectHtml += `<option value="${status}" ${isSelected}>${status}</option>`;
+                });
+                selectHtml += '</select>';
+
+
+                let detailsHtml = '';
+
+                // GPS
+                if (report.gpsCoords) {
+                    detailsHtml += `<p><strong>Localização GPS:</strong> ${report.gpsCoords}</p>`;
+                } else {
+                    detailsHtml += `<p><strong>Localização GPS:</strong> Não informado</p>`;
+                }
+
+                // Mídias
+                detailsHtml += '<p style="margin-top: 10px;"><strong>Evidências:</strong></p>';
+                let mediaHtml = '';
+                if (report.mediaFiles && report.mediaFiles.length > 0) {
+                    report.mediaFiles.forEach(file => {
+                        if (file.type.startsWith('image/')) {
+                            mediaHtml += `<a href="${file.data}" target="_blank" title="${file.name}"><img src="${file.data}" alt="${file.name}"></a>`;
+                        } else if (file.type.startsWith('video/')) {
+                            mediaHtml += `
+                                <video controls>
+                                    <source src="${file.data}" type="${file.type}">
+                                    Seu navegador não suporta o vídeo.
+                                </video>`;
+                        }
+                    });
+                }
+
+                if (mediaHtml) {
+                    detailsHtml += '<div class="report-media-gallery">' + mediaHtml + '</div>';
+                } else {
+                    detailsHtml += '<small style="margin-top: 4px;">Nenhuma evidência anexada.</small>';
+                }
+
+                //card do relatório
+                const reportElement = document.createElement('div');
+                reportElement.className = 'report-item';
+                reportElement.setAttribute('data-status', report.status);
+                reportElement.setAttribute('data-report-id', report.id);
+                reportElement.id = `report-${report.id}`;
+
+                reportElement.innerHTML = `
+                    <div class="report-item-header">
+                        <div>
+                            <h4>${report.typeProblem}</h4>
+                            <small>${date}</small>
+                        </div>
+                        <span class="details-toggle" onclick="toggleReportDetails(${report.id})">▼</span>
+                    </div>
+                    <div class="report-item-body">
+                        <p><strong>Usuário:</strong> ${report.userName} (${report.userEmail})</p>
+                        <p><strong>Local:</strong> ${report.street}, ${report.complement}</p>
+                        <p><strong>Descrição:</strong> ${report.description}</p>
+                    </div>
+                    <div class="report-item-footer">
+                        <label for="status-${report.id}" style="font-size: 13px; font-weight: 500;">Status:</label>
+                        ${selectHtml}
+                    </div>
+                    <div class="report-item-details" id="details-${report.id}">
+                        ${detailsHtml}
+                    </div>
+                `;
+
+                container.appendChild(reportElement);
+            });
+        }
+
+
+        function updateReportStatus(reportId, newStatus) {
+            const reportIndex = reports.findIndex(r => r.id === reportId);
+
+            if (reportIndex > -1) {
+                reports[reportIndex].status = newStatus;
+                saveToStorage('reports', reports);
+
+                const reportElement = document.querySelector(`[data-report-id="${reportId}"]`);
+                if (reportElement) {
+                    reportElement.setAttribute('data-status', newStatus);
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
